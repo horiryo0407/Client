@@ -1,4 +1,4 @@
-#define WIN32_LEAN_AND_MEAN
+ï»¿#define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
@@ -13,8 +13,25 @@ void receive_handler(SOCKET sock) {
         int ret = recv(sock, buf, sizeof(buf) - 1, 0);
         if (ret > 0) {
             buf[ret] = '\0';//
-            // óM‚µ‚½ƒƒO‚ğ‚»‚Ì‚Ü‚Ü•\¦B \n ‚ªŠÜ‚Ü‚ê‚Ä‚¢‚é‚Ì‚Å©“®‚Å‰üs‚³‚ê‚Ü‚·B
-            std::cout << buf << "> " << std::flush; //
+            // å—ä¿¡ã—ãŸãƒ­ã‚°ã‚’ãã®ã¾ã¾è¡¨ç¤ºã€‚ \n ãŒå«ã¾ã‚Œã¦ã„ã‚‹ã®ã§è‡ªå‹•ã§æ”¹è¡Œã•ã‚Œã¾ã™ã€‚
+            if (ret > 0) {
+                buf[ret] = '\0';
+                std::string msg(buf);
+
+                if (msg.find(">>") != std::string::npos) {
+                    std::cout << "\x1b[38;2;255;230;0m";  // é‡‘è‰²ã£ã½ã„
+                }
+                else if (msg.find("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼") != std::string::npos) {
+                    std::cout << "\x1b[36m";  // æ°´è‰²
+                }
+                else if (msg.find("ã‚¹ã‚³ã‚¢") != std::string::npos) {
+                    std::cout << "\x1b[32m";  // ç·‘
+                }
+
+                std::cout << msg;
+                std::cout << "\x1b[0m";      // è‰²ãƒªã‚»ãƒƒãƒˆ
+                std::cout << "> " << std::flush;
+            }
         }
         else if (ret == 0) {
             std::cout << "\n[SYSTEM] Server closed the connection.\n";
@@ -41,7 +58,7 @@ int main() {
         return 1;
     }
 
-    // óMê—pƒXƒŒƒbƒh‚ğ‹N“®
+    // å—ä¿¡å°‚ç”¨ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’èµ·å‹•
     std::thread(receive_handler, sock).detach();
 
     std::cout << "--- SPEED TYPING GAME CLIENT ---\n";
